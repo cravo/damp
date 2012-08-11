@@ -1,0 +1,17 @@
+DAMP Work-In-Progress Notice
+============================
+This version of DAMP is a work in progress version for testing purposes
+only.  It is not intended for general use, as it has not
+yet been as thoroughly tested as publicly released versions.
+
+It is therefore possible that this version of DAMP is less
+stable than a public version, and may have more bugs (which
+I'd love to hear about), and things that used to work may
+no longer do so (and I'd definitely like to know if that happens!).
+
+USE THIS SOFTWARE AT YOUR OWN RISK. Neither the author nor
+Hedgehog Software can be held responsible for any effects that
+this software may have, adverse or otherwise, on your computer,
+yourself, and/or anything else you can think of.
+
+

@@ -1,0 +1,90 @@
+The DAMP FAQ (Frequently Asked Questions)
+=========================================
+
+This should hopefully save me having to answer the
+same questions over and over again by email...
+
+
+Q: Will you add support for input device "blah" ?
+Q: Will you add support for IRMan?
+Q: Will you add support for infra-red remotes?
+A: No, that's what the input driver system is for.  I am
+   quite happy to add any features to the input driver
+   system that would help YOU to write a driver - but I
+   don't have the time or knowledge to write a driver
+   for a piece of hardware I don't even own...
+
+Q: Can you recommend an LCD display for use with DAMP ?
+A: No - I don't use an LCD with DAMP.  The best place to
+   ask questions about LCDs is on the DAMP mailing list
+   (details of how to subscribe are on the DAMP web site).
+   There are plenty of people there who should be able to
+   help.
+
+Q: Why don't you release the DAMP source code?
+A: I will - but not yet.  So many times I've looked at an
+   open source project and the source is so difficult to
+   understand and extend (mostly due to lack of comments
+   and relevant documentation) that it seems pointless that
+   the source was ever released.  I want to put together
+   a nice package that should make it fairly easy for people
+   to alter DAMP to suit their needs (assuming they know C
+   of course).
+
+Q: The sound quality is poor - how can I make it sound better?
+A: That's what the "Getting the best sound quality" section of
+   the DAMP readme.txt is for.
+
+Q: I have a 486. Will DAMP run on my system?
+Q: When I run DAMP on my 486 the sound stutters. Why?
+A: DAMP will run on a 486.  What type of MP3 files you can play
+   will depend on the MHz speed of your processor, but don't
+   expect to play stereo 128Kbps MP3 files on a 486-33MHz.  You
+   should be able to play lower bit-rate MP3 files, and you could
+   try mono MP3 files as well.  Make sure you use the -q 0 option,
+   and the -noscope option.  Don't even think about trying the
+   visualisation mode as that WILL cause stuttering on such a slow
+   machine.  You should also set the "quality" setting in the "[sound]"
+   section of DAMP.ini (at the bottom of the ini file) to 0.  Also,
+   try adjusting the "sound_freq" setting in the same section to a lower
+   frequency and see if that helps.
+
+Q: I've found this bug that does this: "blah blah blah". Can
+   you fix it ?
+A: You forgot to tell me what version of DAMP you're using, and
+   all you're going to get back is an email asking what version
+   of DAMP you are using.  READ THE README.TXT. It clearly states
+   in at least 2 places that you should tell me what version of
+   DAMP you're using when reporting a bug.  Come on - please
+   help save my time and yours - read the instructions.
+
+Q: Why don't you make DAMP load the MP3 into memory first ?
+A: Because that feature isn't supported in the MP3 playback library
+   I use.  If you want to hack that library about and add that
+   feature, go ahead - I'll then support that feature in DAMP.
+
+Q: Why don't you make DAMP automatically scan a drive for MP3s ?
+A: 1. Because that sort of feature belongs in a front-end, not in
+      DAMP itself.  There is a front-end for DAMP available
+      at http://pluto.spaceports.com/~mpdj/
+   2. Because you can achieve this feature very easily. Let's assume
+      you want to scan C: for all MP3 files and play them in DAMP:
+
+      a) From DOS, or an MS-DOS prompt in Windows, change to the
+         directory where DAMP is installed and type:
+
+            edit dampall.bat
+
+         and hit ENTER.
+      b) You should now have a blank page infront of you. Type:
+
+            dir /S/B c:\*.mp3 >playlist.m3u
+            damp.exe playlist.m3u
+
+         Then select "Save" from the file menu. Then select "Exit"
+         from the file menu.
+      c) Now whenever you want to play all the MP3's on C drive, just
+         change to your DAMP directory and type@
+
+            dampall
+

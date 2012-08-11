@@ -1,0 +1,110 @@
+TITLE  :  DAMP Module Details
+AUTHOR :  Matt Craven (damp@damp-mp3.co.uk)
+UPDATED:  08/07/00
+SHORT  :  A description of the various modules and their relevant
+          files.
+
+---------------------------------------------------------------------
+
+Please note that this document is incomplete.  The module details
+are given here - but without detailed descriptions.  They'll follow
+later.
+
+---------------------------------------------------------------------
+
+AUDIO MODULE
+============
+Files: audio.c audio.h
+       audio_libamp.c audio_libamp.h
+       audio_xaudio.c audio_xaudio.h
+
+---------------------------------------------------------------------
+
+BEAUTIFY FILENAME MODULE
+========================
+Files: beautify.c beautify.h
+
+---------------------------------------------------------------------
+
+CD PLAYBACK MODULE
+==================
+Files: cd.c cd.h
+
+---------------------------------------------------------------------
+
+DAMP CORE MODULE
+================
+Files: damp.c damp.h
+
+---------------------------------------------------------------------
+
+GRAPHICS MODULE
+===============
+Files: graphics.c graphics.h
+
+---------------------------------------------------------------------
+
+GRAPHICAL TEXT MODE MODULE
+==========================
+Files: gtext.c gtext.h
+
+---------------------------------------------------------------------
+
+GUI MODULE
+==========
+Files: gui.c gui.h
+
+---------------------------------------------------------------------
+
+ID3 MODULE
+==========
+Files: id3read.c id3read.h
+
+---------------------------------------------------------------------
+
+INPUT DRIVER MODULE
+===================
+Files: indrv.c indrv.h script.c script.h
+
+---------------------------------------------------------------------
+
+INPUT MODULE
+============
+Files: input.c input.h
+       jstick.c jstick.h
+       keys.c keys.h
+
+---------------------------------------------------------------------
+
+LCD DRIVER MODULE
+=================
+Files: lcd.c lcd.h
+
+---------------------------------------------------------------------
+
+LYRICS3 MODULE
+==============
+Files: lyrics3.c lyrics3.h
+Notes: This module is incomplete and is disabled in the standard DAMP
+       binary release.
+
+---------------------------------------------------------------------
+
+PLAYLIST MODULE
+===============
+Files: playlist.c playlist.h
+
+---------------------------------------------------------------------
+
+SLEEP TIMER MODULE
+==================
+Files: sleep.c sleep.h
+
+---------------------------------------------------------------------
+
+UTILITY FUNCTIONS MODULE
+========================
+Files: util.c util.h
+
+---------------------------------------------------------------------
+

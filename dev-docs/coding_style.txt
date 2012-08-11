@@ -1,0 +1,461 @@
+TITLE  :  Notes on Coding Style
+AUTHOR :  Matt Craven (damp@damp-mp3.co.uk)
+UPDATED:  06/06/00
+SHORT  :  A discussion of the coding style used in DAMP, why it's
+          important, and why you should try and follow it closely.
+
+---------------------------------------------------------------------
+
+Okay, first up I have to say that I know everyone has their own
+style of coding, and no doubt it's different from mine.  This document
+doesn't go into details like where brackets should go, and does the
+"{" go on the same line as the "if" or on the line after.  What it
+does cover however is some basic principles which I hope you'll adopt,
+which make reading code a lot easier.  Some of it is based on stuff I
+learnt at Uni, some of it is stuff I learnt whilst developing DAMP.
+All of it is helpful, and makes your code far more understandable
+and readable, both of which are important in a project as large as DAMP.
+
+---------------------------------------------------------------------
+
+Throughout this document, I'll use as an example the addition of
+a database module to DAMP that does database-type things so you can organise
+your MP3 collection, sort it, search it etc.  I'll cover all the important
+bits one by one, and give a complete sample of code at the end (note the
+code won't really DO anything, so don't expect to be able to cut and
+paste a database engine into DAMP after reading this!)
+
+---------------------------------------------------------------------
+
+Okay, starting at the top level, the module itself should be named
+sensibly.  I'd suggest you call the module "dbase", since that's a
+sensible shortening of "database" that keeps it understandable whilst
+also saving you a bit of typing :-)
+
+So you'll want a header file and the source file.  Call these
+dbase.h and dbase.c respectively.  Both files should have a suitable
+comment at the top, giving the filename, the purpose of the file, and
+the name of the author.
+
+---------------------------------------------------------------------
+
+Now considering the header itself, you want to avoid including it
+multiple times in compilation, as you'll get errors.  This can be
+accomplished by structuring the file like so:
+
+   #ifndef __DBASE_H__
+   #define __DBASE_H__
+   
+   /* rest of the header goes here */
+   
+   #endif
+
+There, simple.  And notice how just reading that it's obvious that
+the meaning of that code is: "If the header hasn't been included,
+note that it has now been included."
+
+---------------------------------------------------------------------
+
+Now considering global types, you should put them in the header and
+prefix their names with the name of the module.  Also, the fields
+of the type should have meaningful names and appropriate comments, as
+well as having a comment explaining the purpose of the type.  For
+example, consider a basic database record:
+
+   /*
+      DBASE_TRACK
+
+      This type is used to store information about each track,
+      including some statistics such as how often that track has
+      been played by the user etc.
+   */
+
+   typedef struct {
+
+      char *name;                   /* Name of the track, dynamically
+                                       allocated */
+
+      char *filename;               /* The actual filename for playback
+                                       purposes, dynamically allocated */
+
+      unsigned int times_played;    /* The number of times the track
+                                       has been played */
+
+      char date_added[9];           /* Date the track was added to the
+                                       database, in the format:
+                                       ddmmyyyy plus a null-terminator */
+   }DBASE_TRACK;
+
+
+I would consider that a perfect definition of a type.  There's a good
+comment at the top explaining what it's for.  Each field of the type
+has a meaningful name.  The comments with each field are not only a more
+verbose description of the field, but contain additional information,
+such as how the "date_added" field is formatted.  This would be useful
+both to yourself and other programmers, since figuring out the format
+of the field only requires a quick look at the header and doesn't require
+that the programmer tries to find it out by looking through the module
+source itself.  Note that the name of the type itself is in upper case.
+Sticking to this is advised if you want to fit in with the style of DAMP.
+
+As a side note, you'll probably also notice the considerable amount of
+white-space in the above definition.  From looking at other people's
+code, I've often wondered if programmers are actually scared of hitting
+the ENTER key!  In my mind, field names in a type should be at least
+double-spaced, and it doesn't matter if the comments next to the field
+names require another line!  Compare the above definition with this:
+
+   typedef struct {
+      char *name; /* name of the track */
+      char *filename; /* filename of the track */
+      unsigned int times_played; /* obvious really */
+      char date_added; /* date it was added */
+   }DBASE_TRACK;
+
+Now surely you can see how much better the first version is?  Here the
+fields are all bunched up and that makes reading really difficult.  And
+look at the comments.  The first version had all the comments neatly
+aligned, which gives a sense of structure to the definition.  And the
+content of the comments is poor.  Particularly "/* obvious really */"
+comment. You really need to stop and think about that.  First of all
+that's a waste of a comment, as you haven't said anything useful.  Secondly,
+it may be obvious what it's for when you typed it, but will it still
+be obvious in six months time?  Did it mean "number of times the user
+has played the track" ?  Did it mean "total amount of time the track
+has spent being played" ?  Or is it a variable that stores something like
+"something multiplied by the variable 'played'" ?   You see?  It really
+ISN'T that obvious after all...
+
+---------------------------------------------------------------------
+
+Moving on now to global variables for the module that need to be accessed
+from outside the module.  These are also declared in the module header,
+and the name of each variable should be prefixed with the module name.
+This avoids namespace pollution, and wherever that variable is used in
+the code, it's instantly obvious which module that variable belongs to.
+
+For example you may want a flag that says whether the module has been
+initialised, and some variables that say how many records are in the
+database etc.  Variables should preferably be declared in lower case if
+you want to fit in with the DAMP style:
+
+   int dbase_initialised;     /* non-zero after the module has been
+                                 initialised */
+
+   int dbase_total_records;   /* Total number of records in the database */
+
+   DBASE_TRACK *dbase_track;  /* The database records for tracks.
+                                 Dynamically allocated. */
+
+The header is also an appropriate place to use some globally required
+#define values.  Again, these should be prefixed with the name of the
+module. DAMP uses uppercase for #define statements, so it's
+advised you do the same if you want to fit into the DAMP style:
+
+   #define DBASE_VERSION 0.25    /* Database module version number */
+
+The final part of the header should contain the prototypes for the
+gloablly accessable functions.  Yet again, prefix the names with the
+module name.  Here's a simple set we might find in a database module:
+
+   int dbase_init(void);
+
+   void dbase_exit(void);
+
+   int dbase_search_track(char *search_string);
+
+   int dbase_add_track(DBASE_TRACK *data);
+
+   int dbase_delete_track(int index);
+
+   int dbase_most_popular_track(void);
+
+As you can see there's no comments this time.  I don't tend to use them
+in function prototypes, as they are really only used as a "quick reference"
+for your module.  The full comment that documents the function should
+accompany the actual function code in the module itself.  Things to note
+are that the names are meaningful, and the names of the parameters are also
+specified.  I like to do this since you know what each parameter is just
+by looking at the header.  For example, I could have put:
+
+   int dbase_search_track(char*);
+
+But it's not immediately obvious what that char* parameter is.  In my
+original version I declared it as:
+
+   int dbase_search_trach(char *search_string);
+
+Which is certainly more helpful when you're trying to remember exactly
+what it is the function expects as its parameter.
+
+---------------------------------------------------------------------
+
+Right, that's the header out of the way, onto the main code for the
+module itself.  As I said earlier, it should start with an appropriate
+comment.  Then any variables which are global to the module, but shouldn't
+be accessed from outside the module should be declared.  I've found that
+declaring these variables similarly to globals, but prefixing them with
+a "_" helps to remind you it's just for use inside the module.  This isn't
+used throughout the DAMP source, as it was only more recently I started
+to do it, but I'd certainly recommend it:
+
+   int _dbase_temporary_total;   /* Used to count records */
+
+Similarly for functions (and their prototypes) not globally accessable:
+
+   void _dbase_read_record(DBASE_TRACK *track);
+
+Consider this small snippet of code:
+
+   FILE *file_pointer;
+   _dbase_temporary_total = 0;
+
+   while(file_pointer != NULL)
+   {
+      _dbase_read_record(&dbase_track[_dbase_temporary_total]);
+
+      _dbase_temporary_total++;
+   }
+
+   dbase_total_records = _dbase_temporary_total;
+
+That's a relatively contrived example I know, but it's merely to illustrate
+how easy it is to see what functions and variables are declared where.
+Your brain starts to automatically read the "_" prefix as "local function"
+or "internal module variable".
+
+Now onto function declarations.  These should always have a comment before
+them that explains what the function does, what its parameters are (and how
+it expects them to be used), and what (if any) its return values are.
+Here's an example:
+
+   /*================================================================
+     dbase_search_track(search_string)
+
+     This function searches the database of tracks for the track name
+     given in the "search_string" parameter.  It only looks for an
+     exact match - it does no partial matching.
+
+     It returns an index into the dbase_track array if the record is
+     found, or -1 if it could not find a match.
+     ==============================================================*/
+
+   int dbase_search_track(char *search_string)
+   {
+      /* code goes here */
+   }
+
+As you can see, the comment tells you everything you need to know
+about the function, hopefully meaning you'd never have to actually
+read the function body in order to find out what it does.  Of course it
+should now go without saying that the function body itself should use
+meaningful variable names, and be very well commented.  Take a look
+at the DAMP source code for an example :-)
+
+---------------------------------------------------------------------
+
+Right.  That's about all I want to say about coding style.  It's
+probably all common sense now you've read it, but I've seen so much
+unreadable code that's hard to understand, and impossible to find
+what you want, that I thought it deserved a good discussion.  Now, as
+promised, here's the example dbase.h and dbase.c that I'd class as
+having "good programming style":
+
+---------------------------------------------------------------------
+
+/* dbase.h
+
+   Header file for the track database module for DAMP.
+   Coded by Matt Craven.
+   06/06/00
+*/
+
+#ifndef __DBASE_H__
+#define __DBASE_H__
+
+/*======= d e f i n e s ===========================================*/
+
+#define DBASE_VERSION 0.25    /* Database module version number */
+
+/*======= t y p e d e f s =========================================*/
+
+/*
+   DBASE_TRACK
+
+   This type is used to store information about each track,
+   including some statistics such as how often that track has
+   been played by the user etc.
+*/
+
+typedef struct {
+
+   char *name;                   /* Name of the track, dynamically
+                                    allocated */
+
+   char *filename;               /* The actual filename for playback
+                                    purposes, dynamically allocated */
+
+   unsigned int times_played;    /* The number of times the track
+                                    has been played */
+
+   char date_added[9];           /* Date the track was added to the
+                                    database, in the format:
+                                    ddmmyyyy plus a null-terminator */
+}DBASE_TRACK;
+
+/*======= g l o b a l   v a r i a b l e s =========================*/
+
+int dbase_initialised;     /* non-zero after the module has been
+                              initialised */
+
+int dbase_total_records;   /* Total number of records in the database */
+
+DBASE_TRACK *dbase_track;  /* The database records for tracks.
+                              Dynamically allocated. */
+
+/*======= p r o t o t y p e s =====================================*/
+
+int dbase_init(void);
+
+void dbase_exit(void);
+
+int dbase_search_track(char *search_string);
+
+int dbase_add_track(DBASE_TRACK *data);
+
+int dbase_delete_track(int index);
+
+int dbase_most_popular_track(void);
+
+#endif
+
+
+---------------------------------------------------------------------
+
+
+/* dbase.c
+
+   Track Database module for DAMP.
+   Coded by Matt Craven
+   06/06/00
+*/
+
+/*======= i n c l u d e s =========================================*/
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <malloc.h>
+
+/*======= d a m p   i n c l u d e s ===============================*/
+
+#include "dbase.h"
+#include "lcd.h"
+
+/*======= g l o b a l   v a r i a b l e s =========================*/
+
+int _dbase_temporary_total;   /* Used to count records */
+
+/*======= p r o t o t y p e s =====================================*/
+
+void _dbase_read_record(DBASE_TRACK *track);
+
+
+
+
+/*===================================================================
+  _dbase_read_record(track)
+
+  This function reads the next record into the track parameter, which
+  is passed by reference.
+  =================================================================*/
+
+void _dbase_read_record(DBASE_TRACK *track)
+{
+   /* code goes here */
+}
+
+
+/*===================================================================
+  dbase_init()
+
+  This function initialises the database module, returning non-zero
+  on success, zero otherwise.
+  =================================================================*/
+
+int dbase_init(void)
+{
+   /* code goes here */
+}
+
+
+/*===================================================================
+  dbase_exit()
+
+  This function shuts down the database module.  You don't normally
+  need to call it, as it's installed as an atexit() routine by
+  dbase_init()
+  =================================================================*/
+
+void dbase_exit(void)
+{
+   /* code goes here */
+}
+
+
+/*================================================================
+  dbase_search_track(search_string)
+
+  This function searches the database of tracks for the track name
+  given in the "search_string" parameter.  It only looks for an
+  exact match - it does no partial matching.
+
+  It returns an index into the dbase_track array if the record is
+  found, or -1 if it could not find a match.
+  ==============================================================*/
+
+int dbase_search_track(char *search_string)
+{
+   /* code goes here */
+}
+
+
+/*===================================================================
+  dbase_add_track(data)
+
+  Adds the given track data to the database, (re)allocating memory
+  as appropriate.  It returns non-zero on success, zero otherwise.
+  =================================================================*/
+
+int dbase_add_track(DBASE_TRACK *data)
+{
+   /* code goes here */
+}
+
+
+/*===================================================================
+  dbase_delete_track(index)
+
+  Deletes the record with the given index from the database.  Returns
+  non-zero on success, zero otherwise.
+  =================================================================*/
+
+int dbase_delete_track(int index)
+{
+   /* code goes here */
+}
+
+
+/*===================================================================
+  dbase_most_popular_track()
+
+  This functions returns the index of the track in the database which
+  has been played the highest number of times.  If several tracks
+  have been played an equal number of times then it returns the last
+  one it found in the databse.
+  =================================================================*/
+
+int dbase_most_popular_track(void)
+{
+   /* code goes here */
+}

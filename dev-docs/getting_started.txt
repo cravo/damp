@@ -1,0 +1,307 @@
+TITLE  :  Getting Started With DAMP
+AUTHOR :  Matt Craven (damp@damp-mp3.co.uk)
+UPDATED:  05/06/00
+SHORT  :  How to download and compile everything you need to compile
+          the DAMP source code.
+
+---------------------------------------------------------------------
+
+CONTENTS
+========
+0. Introduction
+1. Downloading DJGPP
+2. Downloading and compiling the additional libraries
+3. Downloading and compiling DAMP
+4. Additional makefile targets
+5. Making your first modification
+6. Conclusion
+
+---------------------------------------------------------------------
+
+0. Introduction
+===============
+
+Welcome to the DAMP source code.  Hopefully this will be the beginning
+of you adding some great features to DAMP, fixing a bug, or even
+completely customizing DAMP to suit your needs.  I'd like to take this
+chance to wish you all the best with your work.
+
+I'd also like to warn off some of you.  Why would I do that?  Well
+firstly I don't want to get loads of mail asking me how to program
+in C.  If you don't know, I suggest you go off and learn, and come
+back when you've got good enough experience.  I've been programming
+in C for over 3 years, and I've been programming in other languages
+for over 10 years.  For example, if you don't know what a function
+pointer is (and what it looks like), or you don't know what:
+
+   printf("%d\n", x > y ? x : y);
+
+would do, then I really don't think you'll cope with the DAMP source
+code. Of course if you're an experienced C coder, you should be right
+at home with the DAMP source.
+
+Secondly, I don't really want to merge any poorly commented or badly
+written amateur code in with DAMP, as it'll make the package look quite
+horrible. For example if you normally code like this:
+
+   int x,y=0,z=0;
+   for(x=0; x<10; x++)
+   {
+      y=y+2;
+      z=z+x;
+   }
+
+Then it's unlikely you'll produce anything that's good enough to go#
+into DAMP.  However, if this is more your style:
+
+   #define MULT_MAX 10
+
+   int counter;            /* Loop counter for working out the
+                              multiple and total */
+
+   int mult_max_times_two; /* The calculated multiple */
+
+   int mult_max_sum;       /* the sum of 0 to MULT_MAX-1 */
+
+   /* Initialise the variables */
+
+   mult_max_times_two = 0;
+   mult_max_sum = 0;
+
+   /* This loop works out MULT_MAX*2, and sums the numbers from
+      0 to MULT_MAX-1 */
+
+   for(counter = 0; counter < MULT_MAX; counter++)
+   {
+      mult_max_times_two += 2;
+      mult_max_sum += x;
+   }
+
+Then you'll fit right in with the DAMP source code, as it's full
+of descriptive variable and function names (it's practically
+self-documenting) and there's plenty of comments throughout.
+
+Okay, if you think you're up to it, read on!
+
+---------------------------------------------------------------------
+
+1. Downloading DJGPP
+====================
+
+DJGPP is a free 32-bit C (and C++) compiler for DOS by DJ Delorie.
+You can get it from:
+
+http://www.delorie.com/djgpp/
+
+There's a handy "Zip Picker" feature on the site, that asks you what
+you need, then gives you a list of files to download.  I really
+recommend using it to get the files you need.
+
+So what files do you need?
+
+Well you'll want the base package with the latest GCC.  You'll also
+need the binutils and probably the fileutils packages.  I intend
+to get a complete list and put it in the next version of this document.
+
+Once you've downloaded DJGPP, you'll want to set it up on your system.
+I'm not going to give details of how to do that here, as it comes with
+enough documentation to tell you how to do it.  One thing you will want
+to make sure of is that you set the LFN=y option in djgpp.env, as
+DAMP uses long filenames for some of its source files.
+
+To check you've got DJGPP working, from a DOS prompt, type:
+
+   edit myfirst.c
+
+Then in the edit window that appears, type:
+
+   #include <stdio.h>
+
+   int main(void)
+   {
+      printf("Hello world!\n");
+      return 0;
+   }
+
+Save that and exit the editor.  Then at the DOS prompt, type:
+
+   gcc -o myfirst.exe myfirst.c
+
+It should compile and produce myfirst.exe in the current directory. You
+should be able to type:
+
+   myfirst
+
+And see your "Hello world!" message.  If it didn't work then you've not
+set up DJGPP properly.  Please sort it out before proceeding any further.
+
+DO NOT email me with problems setting up DJGPP, there's enough docs with
+DJGPP to do it, and there's the DJGPP mailing list and newsgroup where
+you can get help on installing DJGPP.  Any mails I receive asking for
+help setting up DJGPP will go straight into my Trash folder...
+
+---------------------------------------------------------------------
+
+2. Downloading and compiling the additional libraries
+=====================================================
+
+In the "Download" section of the DAMP Developer web site at
+http://www.damp-mp3.co.uk/developer/
+you'll find a list of all the additional libraries you need.  Download
+each one and install and compile it.  They all come with documentation
+on how to do this, so I'm not going to explain that here.  DON'T mail
+me any questions about getting them set up.  I'll just ignore them.
+
+I think all of the additional libraries come with example programs, so
+make sure you can compile those successfully.  If you can't, then
+you've not installed the package properly.  Please don't try and
+compile DAMP until you've got all the libraries installed correctly.
+
+There are some issues you need to be aware of though:
+
+In the LibAMP package, the filenames should be long filenames but
+they're not.  When you try to compile it you'll get errors about
+missing files.  You need to rename the equivalent short-named file
+to the appropriate long filename before it'll compile successfully.
+Also, if you download the plain LibAMP package, it won't compile
+with the latest DJGPP due to errors in audioalg.c  There's a patch
+linked from the DAMP Developer download area to fix this.  I hope to
+put up a package that contains all these fixes eventually.  Until I
+do, you're stuck with the manual fiddling...
+
+When you try to compile SeeR, you'll get errors about a conflicting
+name between SeeR and Allegro.  When I compiled SeeR I fixed this by
+searching the entire SeeR code for the offending name and prefixing it
+with "_seer_", so I suggest you do this too.  Also, I think the
+basic package has a corrupt makefile.  There's a fixed one on the DAMP
+Developer web site.
+
+---------------------------------------------------------------------
+
+3. Downloading and compiling DAMP
+=================================
+
+Download the complete source package from the "Download" section
+of the DAMP Developer web site at:
+http://www.damp-mp3.co.uk/developer/
+
+Create a directory for DAMP and unzip the source package into it.
+Then edit the file called "Makefile" !*using Notepad*!  If you edit it
+with the standard DOS edit program, you'll break the Makefile. You need
+to edit the line that says:
+
+   XAUDIO_SDK_ROOT=C:/PROGRA~2/DJGPP/XASDK301
+
+To point at the directory where you installed the XAudio library. Once
+you've done that, save the Makefile and return to your DOS prompt.
+
+Once there, make sure you're in the DAMP directory and type:
+
+   make
+
+And DAMP should compile, giving you a DAMP.EXE in the same directory.
+If it doesn't, then you've not set everything up properly.  Go back
+and make sure all the additional libraries are installed correctly and
+working.  When they are, DAMP should compile without problems.
+
+---------------------------------------------------------------------
+
+4. Additional Makefile targets
+==============================
+
+In addition to just typing
+
+   make
+
+To compile DAMP, you can type:
+
+   make compress
+
+Which, provided you've installed UPX in the DJGPP bin directory, will
+compile DAMP and compress the executable to an acceptable size.
+
+Also,
+
+   make debug
+
+Will stop the compilation process from stripping the symbols, so you
+can use other tools such as profilers and debuggers on DAMP.
+
+After compilation, typing
+
+   make clean
+
+Will delete all the .o files that were generated.  Note that doing this
+will mean that the next time you want to alter DAMP, you'll have to
+recompile the entire package rather than just the modified files.
+
+Finally,
+
+   make veryclean
+
+Will remove the .o files AND the DAMP.EXE, so it gets you back to a
+bare source tree.
+
+---------------------------------------------------------------------
+
+5. Making your first modification
+=================================
+
+As an example of editing the source, we'll add a goodbye message to
+DAMP's quit function.
+
+From the DAMP directory, type:
+
+   edit util.c
+
+Scroll down until you see the util_quit() function, which looks like
+this:
+
+   int util_quit(void)
+   {
+      need_to_quit_program = TRUE;
+      return TRUE;
+   }
+
+Now change it so it looks like this:
+
+   int util_quit(void)
+   {
+      need_to_quit_program = TRUE;
+
+      /*
+         Code added by (your name here) on (today's date)
+         Purpose:  To display a goodbye message when leaving DAMP
+      */
+
+      printf("\n\nGoodbye!  Thanks for using DAMP\n\n");
+
+      /* End of addition by (your name here) */
+
+      return TRUE;
+   }
+
+Obviously put your name in where it says "(your name here)" and
+put today's date in where it says "(today's date)".  Then save the file.
+Quit the editor and at the DOS prompt, type:
+
+   make
+
+This should compile ONLY the util.c file, then it'll link it in with
+DAMP.  You can now run DAMP and then quit by pressing ESC to see
+your message.
+
+---------------------------------------------------------------------
+
+6. Conclusion
+=============
+
+This document is still lacking in a couple of areas.  These will be
+addressed in a future version.  Any comments or questions about
+anything that's unclear in this document can be sent to
+damp@damp-mp3.co.uk
+
+Happy DAMP Developing!
+
+Matt Craven, DAMP Author.
+
